@@ -1,4 +1,4 @@
-package com.example.emailscheduler1.web;
+package com.example.emailscheduler1.controller;
 
 import com.example.emailscheduler1.payload.EmailRequest;
 import com.example.emailscheduler1.payload.EmailResponse;
@@ -64,15 +64,16 @@ public class EmailSchedulerController {
         jobDataMap.put("body", ScheduleEmailRequest.getBody());
 
         return JobBuilder.newJob(EmailJob.class)
-                .withIdentity(UUID.randomUUID().toString(),"email-jobs")
+                .withIdentity(UUID.randomUUID().toString(), "email-jobs")
                 .usingJobData(jobDataMap)
                 .storeDurably()
                 .build();
     }
-    private Trigger buildTrigger(JobDetail jobDetail, ZonedDateTime startAt){
+
+    private Trigger buildTrigger(JobDetail jobDetail, ZonedDateTime startAt) {
         return TriggerBuilder.newTrigger()
                 .forJob(jobDetail)
-                .withIdentity(jobDetail.getKey().getName(),"email-triggers")
+                .withIdentity(jobDetail.getKey().getName(), "email-triggers")
                 .withDescription("Send Email Triggers")
                 .startAt(Date.from(startAt.toInstant()))
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
